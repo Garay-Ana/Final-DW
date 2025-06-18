@@ -55,8 +55,11 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
     echo '</VirtualHost>' >> /etc/apache2/sites-available/000-rinconcito.conf && \
     a2ensite 000-rinconcito.conf
 
-# Instalar dependencias PHP (modo producción)
+# Instalar dependencias PHP (sin dependencias de desarrollo)
 RUN composer install --no-dev --optimize-autoloader
+
+# Enlace simbólico del storage (si falla, no detiene el build)
+RUN php artisan storage:link || true
 
 # Establecer permisos correctos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
