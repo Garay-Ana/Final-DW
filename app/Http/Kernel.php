@@ -20,7 +20,6 @@ class Kernel extends HttpKernel
     'web' => [
         \App\Http\Middleware\StartSession::class,      // Nuevo
         \App\Http\Middleware\ShareErrorsFromSession::class, // Nuevo
-        \App\Http\Middleware\HandleInertiaRequests::class, // Existente
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ],
 
@@ -33,4 +32,3 @@ protected $routeMiddleware = [
     'admin' => \App\Http\Middleware\AdminMiddleware::class,
     'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
 ];
-}
