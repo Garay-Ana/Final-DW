@@ -62,7 +62,7 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
 RUN composer install --no-dev --optimize-autoloader
 
 # Generar clave de aplicación
-RUN php artisan key:generate
+#RUN php artisan key:generate
 
 # Limpiar y cachear config, rutas y vistas
 RUN php artisan config:clear && \
