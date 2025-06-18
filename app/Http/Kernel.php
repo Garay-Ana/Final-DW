@@ -7,28 +7,23 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * Global HTTP middleware stack.
-     * Estos middleware se ejecutan en *todas* las peticiones al aplicativo.
+     * Middleware global de la aplicación.
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
-        \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        // Aquí van tus middleware globales si tienes alguno
     ];
 
     /**
-     * Middleware que se agrupan por tipo de ruta.
+     * Middleware por grupos (web y api).
      */
     protected $middlewareGroups = [
         'web' => [
+            // Tus middleware actuales (puede incluir EncryptCookies, StartSession, etc.)
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
 
-            // Middleware para compartir los errores con las vistas Blade ($errors)
+            // Middleware necesario para que $errors funcione en las vistas
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
 
             \App\Http\Middleware\VerifyCsrfToken::class,
@@ -36,27 +31,16 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
+            // Tus middleware de API si usas
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
     /**
-     * Middleware individuales o asignables a rutas específicas.
+     * Middleware individuales de rutas.
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
-        // Personalizados
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
     ];
 }
