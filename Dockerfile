@@ -77,5 +77,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Exponer el puerto 80
 EXPOSE 80
 
-# Comando para mantener Apache corriendo en primer plano
-CMD ["apache2-foreground"]
+# Mostrar log de Laravel si existe, luego iniciar Apache
+CMD if [ -f storage/logs/laravel.log ]; then echo '--- CONTENIDO DE LARAVEL.LOG ---' && cat storage/logs/laravel.log; else echo 'No hay archivo storage/logs/laravel.log'; fi && apache2-foreground
