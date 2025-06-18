@@ -64,11 +64,11 @@ RUN composer install --no-dev --optimize-autoloader
 # Generar clave de aplicación
 #RUN php artisan key:generate
 
-# Limpiar y cachear config, rutas y vistas
+# Limpiar cachés sin volver a generarlas (para evitar errores en Render)
 RUN php artisan config:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+    php artisan route:clear && \
+    php artisan view:clear
+
 
 # Establecer permisos correctos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
