@@ -1,24 +1,54 @@
-/.phpunit.cache
+# Laravel storage and vendor
+/vendor
 /node_modules
 /public/build
 /public/hot
-/public/storage
+
+# Ignorar archivos dentro de public/storage pero mantener la carpeta
+/public/storage/*
+!public/storage/.gitkeep
+
+# Ignorar todo en storage, excepto las subcarpetas necesarias
+/storage/*
+!storage/app/
+!storage/framework/
+!storage/framework/cache/
+!storage/framework/sessions/
+!storage/framework/views/
+!storage/logs/
+!storage/framework/cache/.gitkeep
+!storage/framework/sessions/.gitkeep
+!storage/framework/views/.gitkeep
+!storage/logs/.gitkeep
+
+# Archivos claves
 /storage/*.key
 /storage/pail
-/vendor
+
+# Bootstrap
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Archivos de entorno
 .env
 .env.backup
 .env.production
-.phpactor.json
+/auth.json
+
+# Archivos temporales
+/.phpunit.cache
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
+.phpactor.json
 npm-debug.log
 yarn-error.log
-/auth.json
-/.fleet
+
+# Archivos del sistema y configuración de IDEs
+Homestead.json
+Homestead.yaml
 /.idea
-/.nova
 /.vscode
+/.fleet
 /.zed
-bootstrap/cache/*.php
+/.nova
+.DS_Store
+Thumbs.db
