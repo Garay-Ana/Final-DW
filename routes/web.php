@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Route;
 
 // Vista principal de bienvenida o landing
 Route::get('/', function () {
-    $minPrice = 1000; // Puedes reemplazar esto por un valor dinámico si lo necesitas
-    return view('welcome', compact('minPrice'));
-})->name('welcome');
+    $minPrice = 1000;
+    $maxPrice = 5000000; // O el valor dinámico que corresponda
+    return view('welcome', compact('minPrice', 'maxPrice'));
+});
+
 
 Route::post('/guardar-resena', [PlatoController::class, 'guardarResena'])->name('guardarResena');
 
