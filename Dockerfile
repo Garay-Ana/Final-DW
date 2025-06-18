@@ -55,24 +55,15 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
     echo '</VirtualHost>' >> /etc/apache2/sites-available/000-rinconcito.conf && \
     a2ensite 000-rinconcito.conf
 
-# Instalar dependencias de Laravel con Composer
+# Instalar dependencias PHP (modo producción)
 RUN composer install --no-dev --optimize-autoloader
 
-# 🔑 Asegurar permisos adecuados (.env incluido)
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chmod 644 /var/www/html/.env
+# Establecer permisos correctos
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ⚙️ Ejecutar comandos artisan necesarios para producción
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
-# Puerto expuesto
+# Exponer el puerto 80
 EXPOSE 80
 
-# Mostrar el log si existe, útil para debug en Render
+# Mostrar log de Laravel si existe, luego iniciar Apache
 CMD if [ -f storage/logs/laravel.log ]; then echo '--- CONTENIDO DE LARAVEL.LOG ---' && cat storage/logs/laravel.log; else echo 'No hay archivo storage/logs/laravel.log'; fi && apache2-foreground
