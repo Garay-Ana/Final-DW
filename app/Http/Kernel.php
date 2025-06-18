@@ -18,6 +18,7 @@ class Kernel extends HttpKernel
      */
    protected $middlewareGroups = [
     'web' => [
+        \App\Http\Middleware\FixAuthRequestMiddleware::class,
         \App\Http\Middleware\StartSession::class,      // Nuevo
         \App\Http\Middleware\ShareErrorsFromSession::class, // Nuevo
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
