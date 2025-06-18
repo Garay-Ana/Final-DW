@@ -16,32 +16,24 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     pkg-config \
     build-essential \
-    gnupg \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd zip pdo pdo_mysql intl xml mbstring \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar Node.js 18 (recomendado para Laravel + Vite)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm@latest
-
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Instalar Node.js 20 (compatible con Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
 
 # Copiar código fuente al contenedor
 COPY . /var/www/html
 
-# Establecer el directorio de trabajo
+# Cambiar directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias Node.js y compilar assets con Vite
-RUN npm install && npm run build
-
-# Instalar dependencias PHP sin las de desarrollo
-RUN composer install --no-dev --optimize-autoloader
-
-# Habilitar mod_rewrite de Apache
+# Habilitar mod_rewrite para Laravel
 RUN a2enmod rewrite
 
 # Configurar DocumentRoot a /public
@@ -67,15 +59,21 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
     echo '</VirtualHost>' >> /etc/apache2/sites-available/000-rinconcito.conf && \
     a2ensite 000-rinconcito.conf
 
-# Ejecutar el enlace simbólico al storage
+# Instalar dependencias PHP (sin dependencias de desarrollo)
+RUN composer install --no-dev --optimize-autoloader
+
+# Instalar dependencias de Node y compilar assets con Vite
+RUN npm install && npm run build
+
+# Enlace simbólico del storage (si falla, no detiene el build)
 RUN php artisan storage:link || true
 
-# Establecer permisos correctos para Laravel
+# Establecer permisos correctos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponer el puerto del servidor web
+# Exponer el puerto 80
 EXPOSE 80
 
-# Mostrar logs y lanzar Apache al iniciar
+# Mostrar log de Laravel si existe, luego iniciar Apache
 CMD if [ -f storage/logs/laravel.log ]; then echo '--- CONTENIDO DE LARAVEL.LOG ---' && cat storage/logs/laravel.log; else echo 'No hay archivo storage/logs/laravel.log'; fi && apache2-foreground
