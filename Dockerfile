@@ -27,7 +27,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 
 # Copiar archivo .env directamente
-COPY .env /var/www/html/.env
+#COPY .env /var/www/html/.env
 
 # Cambiar directorio de trabajo
 WORKDIR /var/www/html
