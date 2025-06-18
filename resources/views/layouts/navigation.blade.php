@@ -41,13 +41,13 @@
                             </div>
                         </button>
                     </x-slot>
-    
+
                     <x-slot name="content">
                         <!-- Profile Link -->
                         <x-dropdown-link :href="route('profile.show')">
                             {{ __('Perfil de Usuario') }}
                         </x-dropdown-link>
-    
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -92,7 +92,7 @@
             @endif --}}
         </div>
 
-        <<!-- Responsive Settings Options -->
+        <!-- Responsive Settings Options -->
 <div class="pt-4 pb-4 border-t border-gray-100 px-4 bg-white">
     <div class="mb-4 text-center">
         <div class="text-lg font-semibold text-gray-900">{{ Auth::user()->name }}</div>
