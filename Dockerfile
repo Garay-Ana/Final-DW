@@ -65,9 +65,9 @@ RUN composer install --no-dev --optimize-autoloader
 #RUN php artisan key:generate
 
 # Limpiar cachés sin volver a generarlas (para evitar errores en Render)
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+#RUN php artisan config:clear && \
+ #   php artisan route:clear && \
+  #  php artisan view:clear
 
 
 # Establecer permisos correctos
