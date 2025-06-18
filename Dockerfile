@@ -1,15 +1,13 @@
-# Usamos una imagen base oficial de PHP con Apache
+# Imagen base oficial de PHP con Apache
 FROM php:8.2-apache
 
-# Instala dependencias del sistema necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    libzip-dev \
     zip \
     curl \
-    npm \
-    nodejs \
+    libzip-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -19,18 +17,25 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     build-essential \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd zip pdo pdo_mysql intl xml mbstring
+    && docker-php-ext-install gd zip pdo pdo_mysql intl xml mbstring \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instala Composer
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el código fuente del proyecto primero
+# Copiar código fuente al contenedor
 COPY . /var/www/html
 
-# Habilita mod_rewrite para Apache
+# Copiar archivo .env directamente
+COPY .env /var/www/html/.env
+
+# Cambiar directorio de trabajo
+WORKDIR /var/www/html
+
+# Habilitar mod_rewrite para Laravel
 RUN a2enmod rewrite
 
-# Cambia el DocumentRoot a /public, después de copiar todo el código
+# Configurar DocumentRoot a /public
 RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/document-root.conf && \
     echo '<Directory /var/www/html/public>' >> /etc/apache2/conf-available/document-root.conf && \
     echo '    Options Indexes FollowSymLinks' >> /etc/apache2/conf-available/document-root.conf && \
@@ -53,20 +58,24 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
     echo '</VirtualHost>' >> /etc/apache2/sites-available/000-rinconcito.conf && \
     a2ensite 000-rinconcito.conf
 
-# Establecer directorio de trabajo
-WORKDIR /var/www/html
-
-# Instalar dependencias PHP con Composer
+# Instalar dependencias PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Instalar dependencias Node.js y construir frontend
-RUN npm install && npm run build
+# Generar clave de aplicación
+RUN php artisan key:generate
 
-# Cambiar permisos para almacenamiento y cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Limpiar y cachear config, rutas y vistas
+RUN php artisan config:clear && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# Exponer puerto 80
+# Establecer permisos correctos
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Exponer el puerto 80
 EXPOSE 80
 
-# Comando para iniciar Apache en primer plano
+# Comando para mantener Apache corriendo en primer plano
 CMD ["apache2-foreground"]
