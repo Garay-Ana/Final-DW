@@ -1,7 +1,9 @@
 # Laravel storage and vendor
 /vendor
 /node_modules
-#/public/build
+/public/build/*
+!public/build/.gitkeep
+!public/build/assets/
 /public/hot
 
 # Ignorar archivos dentro de public/storage pero mantener la carpeta

@@ -59,21 +59,26 @@ RUN echo 'DocumentRoot /var/www/html/public' > /etc/apache2/conf-available/docum
     echo '</VirtualHost>' >> /etc/apache2/sites-available/000-rinconcito.conf && \
     a2ensite 000-rinconcito.conf
 
-# Instalar dependencias PHP (sin dependencias de desarrollo)
+# Instalar dependencias PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Instalar dependencias de Node y compilar assets con Vite
+# Instalar dependencias de Node.js y compilar assets
 RUN npm install && npm run build
 
-# Enlace simbólico del storage (si falla, no detiene el build)
+# Crear enlace simbólico al storage
 RUN php artisan storage:link || true
 
-# Establecer permisos correctos
+# Cachear config, rutas y vistas (evita problemas en prod y mejora rendimiento)
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Establecer permisos adecuados
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponer el puerto 80
+# Exponer puerto HTTP
 EXPOSE 80
 
-# Mostrar log de Laravel si existe, luego iniciar Apache
+# Mostrar logs (si existen) y ejecutar Apache
 CMD if [ -f storage/logs/laravel.log ]; then echo '--- CONTENIDO DE LARAVEL.LOG ---' && cat storage/logs/laravel.log; else echo 'No hay archivo storage/logs/laravel.log'; fi && apache2-foreground
