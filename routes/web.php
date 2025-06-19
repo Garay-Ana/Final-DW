@@ -59,7 +59,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chef/pedido/actualizar-agrupado', fn() => view('chef.actualizar-agrupado'))->name('chef.pedido.actualizar-agrupado.view');
 
     Route::get('/repartidor', [App\Http\Controllers\RepartidorController::class, 'dashboard'])->name('repartidor.dashboard');
-    Route::get('/repartidor/iniciar-sesion', fn() => view('iniciar-sesion-repartidor'))->name('repartidor.iniciar-sesion');
+    // Route eliminada porque la vista 'iniciar-sesion-repartidor' no existe y genera error
+    // Route::get('/repartidor/iniciar-sesion', fn() => view('iniciar-sesion-repartidor'))->name('repartidor.iniciar-sesion');
     Route::get('/repartidor/aceptar-pedido', fn() => view('aceptar-pedido'))->name('repartidor.aceptar-pedido');
     Route::get('/repartidor/recoger-pedido', fn() => view('recoger-pedido'))->name('repartidor.recoger-pedido');
     Route::get('/repartidor/actualizar-estado', fn() => view('actualizar-estado'))->name('repartidor.actualizar-estado');
